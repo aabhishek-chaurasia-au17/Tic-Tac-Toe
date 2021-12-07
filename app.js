@@ -1,7 +1,12 @@
 
-let PLAYER_X = "X"
-let PLAYER_O = "O"
-let nextTurn 
+const PLAYER_X = "X"
+const PLAYER_O = "O"
+let nextTurn = false
+let boardMoves = 0;
+
+const cellElements = document.querySelectorAll(".cell");
+const btnRestart = document.querySelector(".game-restart");
+const winnerText = document.querySelector(".winner-name");
 
 let COMBOS = [
     [0, 1, 2],
@@ -15,13 +20,14 @@ let COMBOS = [
 ];
 
 
-const cellElements = document.querySelectorAll(".cell");
-const btnRestart = document.querySelector(".game-restart");
-
 function startListenningForClick(){
     cellElements.forEach(function (cell) {
         return cell.addEventListener("click", onButtonClick, {once: true})
     })
+}
+
+function playerTurn() {
+    nextTurn = !nextTurn
 }
 
 
@@ -31,18 +37,28 @@ function onButtonClick(e) {
     let currentPlayer
     if (nextTurn) {
        currentPlayer = this.innerHTML = PLAYER_X
-       nextTurn = false
+       playerTurn()
+       boardMoves++
     }else{
        currentPlayer = this.innerHTML = PLAYER_O
-       nextTurn = true
+       playerTurn()
+       boardMoves++
     }
     placeMark(cell, currentPlayer)
+    
     if (checkwin(currentPlayer)) {
-        alert(`winner ${currentPlayer}`)
+        setTimeout(() => {
+            winnerText.innerHTML = `${currentPlayer} is winner`
+        },);
+        
         setTimeout(() => {
             window.location.reload()
-        }, 1000);
+        }, 2000);
         
+    }
+
+    if (boardMoves === 9) {
+        winnerText.innerHTML = `Match is Draw`
     }
 }
 
