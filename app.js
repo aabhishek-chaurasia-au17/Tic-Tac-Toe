@@ -4,16 +4,15 @@ const PLAYER_O = "O"
 let nextTurn = false
 let boardMoves = 0;
 
-
 const cellElements = document.querySelectorAll(".cell")
 const btnRestart = document.querySelector(".game-restart");
 const winnerText = document.querySelector(".winner-name");
 
 let COMBOS = [
-    [0, 1, 2],  //combos [0] = //[0,1,2] 
-    [3, 4, 5],                 //[2,5,8]
-    [6, 7, 8],  //a = combos[0]
-    [0, 3, 6],  //[0,1,2]
+    [0, 1, 2],  
+    [3, 4, 5],   
+    [6, 7, 8],  
+    [0, 3, 6], 
     [1, 4, 7],
     [2, 5, 8],
     [0, 4, 8],
@@ -21,7 +20,6 @@ let COMBOS = [
 ];
 
 let board = [null, null, null, null, null, null, null, null, null];
-
 
 function startListenningForClick(){
     cellElements.forEach(function (cell) {
@@ -33,51 +31,25 @@ function playerTurn() {
     nextTurn = !nextTurn
 }
 
-
 function onButtonClick(e) {
     let cell = e.target
-    let divId = e.target.id
-    // console.log(divId);
+    let divId = cell.id
+    let currentPlayer 
 
-    let currentPlayer
-    if (nextTurn) {
-       
-       this.innerHTML = PLAYER_X 
-       currentPlayer = this.innerHTML
-       playerTurn()
-
-       board[divId -1] = currentPlayer
-       boardMoves++
-       
-    }else{
-       
-       this.innerHTML = PLAYER_O
-       currentPlayer = this.innerHTML
-       playerTurn()
-       board[divId -1] = currentPlayer
-       boardMoves++
-    }
-    // console.log(board);
-
+    this.innerHTML = nextTurn ? PLAYER_X : PLAYER_O
+    currentPlayer = this.innerHTML
+    playerTurn()
+    board[divId -1] = currentPlayer
+    boardMoves++
     placeMark(cell, currentPlayer)
-    const {isWinner, combo} = checkwin(currentPlayer)
-
-    if (isWinner) {
-        setTimeout(() => {
-            winnerText.innerHTML = `${currentPlayer} is winner`
-           //[0,1,2]
-        },);
-        setTimeout(() => {
-            window.location.reload()
-        }, 2000);
-    }
+    const {isWin, combo} = checkwin(currentPlayer) 
+    if (isWin) return winnerText.innerHTML = `${currentPlayer} is winner`
     checkDraw(boardMoves)    
+    ListenningForRestart()
 }
 
 function checkDraw(boardMoves) {
-    if (boardMoves === 9) {
-        winnerText.innerHTML = `Match is Draw`
-    }
+    if (boardMoves === 9) return winnerText.innerHTML = `Match is Draw`
 }
 
 
@@ -86,30 +58,37 @@ function placeMark(cell, currentPlayer) {
 }
 
 function checkwin(currentPlayer){
-    
+    let isWin
     for (let i = 0; i < COMBOS.length; i++) {
-        let combo = COMBOS[i] //[0,1,2]
-        let isWinner = true
+        let combo = COMBOS[i];
+        isWin = true
         for (let j = 0; j < combo.length; j++) {
-            let index = combo[j]
-            if(board[index] !== currentPlayer){ //
-                isWinner = false
+            let indexNum = combo[j];
+            if(board[indexNum] !== currentPlayer){
+                isWin = false
             }
-            if(isWinner){
-                return {isWinner, combo}
-            }
-            
-            
+        }if(isWin){
+           return {isWin, combo}
         }
-    }
-    return {isWinner}
-
+    }return {isWin}
+    
 }
 
+function ListenningForRestart(){
+    btnRestart.addEventListener("click", restartGame)
+}
 
-btnRestart.addEventListener("click", function(){
-    window.location.reload()
-})
+function restartGame() {
+    
+    board.forEach((board) => {
+      board = null;
+    });
 
+    cellElements.forEach((cell) => {
+        cell.innerHTML = '';
+    });
+      winnerText.innerText = `Play`;
+
+}
 
 startListenningForClick()
