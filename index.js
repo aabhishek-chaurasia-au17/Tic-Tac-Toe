@@ -1,12 +1,12 @@
 const cellElement = document.querySelectorAll(".cell")
 const showResult = document.querySelector(".winner-name")
 const restartBtn = document.querySelector(".game-restart")
-const Player_symbol = {
+const PLAYERS = {
     X : "X",
     O : "O"
 }
 
-let winingCombinations = [
+const winingCombinations = [
     [0,1,2],
     [3,4,5],
     [6,7,8],
@@ -16,6 +16,8 @@ let winingCombinations = [
     [0,4,8],
     [2,4,6]
 ]
+
+let winCombos = winingCombinations
 
 const initialgameBoardValue = new Array(9).fill(null)
 let gameBoard = initialgameBoardValue
@@ -32,12 +34,24 @@ function startGameClickListening() {
 
 function onCellclick(e) {
     const cellId = e.target.id
-    const currentPlayer = nextTurn ? Player_symbol.X : Player_symbol.O
+    const currentPlayer = nextTurn ? PLAYERS.X : PLAYERS.O
     this.innerText = currentPlayer
     changeTurn()
     gameBoard[cellId -1] = currentPlayer
     moveCount++
-    showMessage(currentPlayer)
+    const {isWinner, combo} = checkForWinner(currentPlayer)
+    if(isWinner){
+        changeColor(combo)
+        showMessage(`${currentPlayer} is won`)
+        disableStartGameListening()
+        gameOver()
+        return;
+    }
+    if(moveCount === 9){
+        showMessage(`Match is Draw`)
+        gameOver()
+    }
+    
 }
 
 function disableStartGameListening() {
@@ -46,17 +60,8 @@ function disableStartGameListening() {
     });
 }
 
-function showMessage(currentPlayer) {
-    const {isWinner, combo} = checkForWinner(currentPlayer)
-    if(isWinner){
-        showResult.innerText = `${currentPlayer} is won`
-        changeColor(combo)
-        disableStartGameListening()
-        gameOver()
-    }else if(moveCount === 9){
-        showResult.innerText = `Match is Draw`
-        gameOver()
-    }
+function showMessage(massege) {
+    showResult.innerText = `${massege}`
 }
 
 function showResetBtn() {
@@ -93,18 +98,17 @@ function checkForWinner(currentPlayer) {
 
 function gameOver() {
     showResetBtn() 
-    restartBtn.addEventListener("click", gameReset)
 }
 
 function gameReset() {
-    // debugger
     cellElement.forEach((cell) => {
         cell.innerText = ""
         cell.style.backgroundColor = "white"
         cell.removeEventListener("click", onCellclick)
         
     })
-    winingCombinations = []
+
+    winCombos = []
     nextTurn = false
     moveCount = 0
     gameBoard = initialgameBoardValue
