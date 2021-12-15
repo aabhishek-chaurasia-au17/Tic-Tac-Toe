@@ -19,11 +19,13 @@ const winingCombinations = [
 
 let winCombos = winingCombinations
 
-const initialgameBoardValue = new Array(9).fill(null)
-let gameBoard = initialgameBoardValue
+let gameBoard = getNewBoardState()
 let nextTurn = false
 let moveCount = 0
 
+function getNewBoardState(){
+    return new Array(9).fill(null)
+}
 
 function startGameClickListening() {
     cellElement.forEach((cell) => {
@@ -111,7 +113,7 @@ function gameReset() {
     winCombos = []
     nextTurn = false
     moveCount = 0
-    gameBoard = initialgameBoardValue
+    gameBoard = getNewBoardState()
     showResult.innerText = `Play`;
     restartBtn.classList.add("hide")
     startGameClickListening()
