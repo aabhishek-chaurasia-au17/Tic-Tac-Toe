@@ -115,5 +115,4 @@ function gameReset() {
     startGameClickListening()
 }
 
-
 startGameClickListening()
