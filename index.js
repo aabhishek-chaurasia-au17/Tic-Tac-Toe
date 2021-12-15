@@ -17,8 +17,6 @@ const winingCombinations = [
     [2,4,6]
 ]
 
-let winCombos = winingCombinations
-
 let gameBoard = getNewBoardState()
 let nextTurn = false
 let moveCount = 0
@@ -31,7 +29,6 @@ function startGameClickListening() {
     cellElement.forEach((cell) => {
         cell.addEventListener("click", onCellclick, {once:true})
     })
-    
 }
 
 function onCellclick(e) {
@@ -110,7 +107,6 @@ function gameReset() {
         
     })
 
-    winCombos = []
     nextTurn = false
     moveCount = 0
     gameBoard = getNewBoardState()
